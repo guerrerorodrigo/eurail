@@ -1,8 +1,8 @@
 package com.rodrigoguerrero.eurail.ui.main
 
 import com.rodrigoguerrero.eurail.ui.mvi.Middleware
-import com.rodrigoguerrero.eurail.ui.network.NetworkMonitor
-import com.rodrigoguerrero.eurail.ui.network.NetworkState
+import com.rodrigoguerrero.eurail.utils.network.NetworkMonitor
+import com.rodrigoguerrero.eurail.utils.network.NetworkState
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,16 +23,23 @@ internal class MainNetworkMiddleware @Inject constructor(
 
     private fun listenForNetworkChanges() {
         networkMonitor.init()
+        if (!networkMonitor.isConnected()) {
+            dispatch(MainAction.OnNetworkStateChanged(false))
+        }
         scope.launch {
             networkMonitor.networkAvailableStateFlow
                 .filterNotNull()
                 .collect { networkState ->
-                    val isAvailable = when (networkState) {
-                        NetworkState.Available -> true
-                        NetworkState.Unavailable -> false
-                    }
-                    dispatch(MainAction.OnNetworkStateChanged(isAvailable))
+                    handleNetworkState(networkState)
                 }
         }
+    }
+
+    private fun handleNetworkState(networkState: NetworkState) {
+        val isAvailable = when (networkState) {
+            NetworkState.Available -> true
+            NetworkState.Unavailable -> false
+        }
+        dispatch(MainAction.OnNetworkStateChanged(isAvailable))
     }
 }

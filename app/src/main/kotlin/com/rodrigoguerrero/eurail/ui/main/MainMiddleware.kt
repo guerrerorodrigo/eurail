@@ -22,6 +22,7 @@ internal class MainMiddleware @Inject constructor(
     ) {
         when (action) {
             MainAction.Load -> loadArticles()
+            MainAction.OnResume -> refreshCache()
             is MainAction.OnSearchQueryChanged -> filterArticles(
                 query = action.query,
                 articles = state.articles,
@@ -88,5 +89,11 @@ internal class MainMiddleware @Inject constructor(
             }.toPersistentList()
         }
         dispatch(MainAction.OnSearchPerformed(visibleArticles))
+    }
+
+    private fun refreshCache() {
+        scope.launch {
+            articlesInteractor.refreshCache()
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.rodrigoguerrero.eurail.data.articles.di
 
+import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesLocalDataSource
+import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesLocalDataSourceImpl
 import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesRemoteDataSource
 import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesRemoteDataSourceImpl
 import com.rodrigoguerrero.eurail.data.articles.repositories.ArticlesRepository
@@ -16,6 +18,11 @@ internal interface DataModule {
     fun bindRemoteDataSource(
         impl: ArticlesRemoteDataSourceImpl,
     ): ArticlesRemoteDataSource
+
+    @Binds
+    fun bindLocalDataSource(
+        impl: ArticlesLocalDataSourceImpl,
+    ): ArticlesLocalDataSource
 
     @Binds
     fun bindArticlesRepository(

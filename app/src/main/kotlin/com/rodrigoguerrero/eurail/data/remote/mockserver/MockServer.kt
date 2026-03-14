@@ -6,7 +6,7 @@ import io.ktor.http.HttpStatusCode
 
 internal val mockEngine = MockEngine { request ->
     when (request.url.encodedPath) {
-        "/articles" -> invalidJsonResponse()
+        "/articles" -> validResponse()
 
         else -> respond(
             "Not Found",

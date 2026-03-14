@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "eurail"
 include(":app")
- 
+include(":shared")

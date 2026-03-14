@@ -1,4 +1,4 @@
-package com.rodrigoguerrero.eurail.ui.network
+package com.rodrigoguerrero.eurail.utils.network
 
 sealed class NetworkState {
     object Unavailable : NetworkState()
