@@ -28,7 +28,10 @@ internal class MainReducer @Inject constructor() : Reducer<MainState, MainAction
             fullScreenMessageState = action.fullScreenMessageState,
             isLoading = false,
         )
-        MainAction.Load,
+        MainAction.OnRetry -> state.copy(
+            fullScreenMessageState = null,
+            isLoading = true,
+        )
         MainAction.OnPause,
         MainAction.OnResume,
         -> state

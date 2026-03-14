@@ -13,8 +13,4 @@ internal class MainViewModel @Inject constructor(
     middlewares = middlewares.toList(),
     reducer = reducer,
     initialState = MainState.initial,
-) {
-    init {
-        dispatch(MainAction.Load)
-    }
-}
+)

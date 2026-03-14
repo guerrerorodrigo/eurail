@@ -8,6 +8,7 @@ import com.rodrigoguerrero.eurail.ui.common.components.FullScreenMessageState
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCardState
 import com.rodrigoguerrero.eurail.ui.main.mappers.toArticleCardState
 import com.rodrigoguerrero.eurail.ui.mvi.Middleware
+import com.rodrigoguerrero.eurail.utils.network.NoNetworkException
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -21,8 +22,8 @@ internal class MainMiddleware @Inject constructor(
         action: MainAction,
     ) {
         when (action) {
-            MainAction.Load -> loadArticles()
-            MainAction.OnResume -> refreshCache()
+            MainAction.OnRetry,
+            MainAction.OnResume -> loadArticles()
             is MainAction.OnSearchQueryChanged -> filterArticles(
                 query = action.query,
                 articles = state.articles,
@@ -47,6 +48,11 @@ internal class MainMiddleware @Inject constructor(
         val error = when (throwable) {
             is NetworkException.ClientError -> FullScreenMessageState.RemoteFullScreenMessage(
                 messageRes = throwable.errorMessage.orEmpty(),
+                ctaLabelRes = R.string.try_again,
+            )
+
+            is NoNetworkException -> FullScreenMessageState.LocalFullScreenMessage(
+                messageRes = R.string.there_is_no_internet_connection,
                 ctaLabelRes = R.string.try_again,
             )
 
@@ -89,11 +95,5 @@ internal class MainMiddleware @Inject constructor(
             }.toPersistentList()
         }
         dispatch(MainAction.OnSearchPerformed(visibleArticles))
-    }
-
-    private fun refreshCache() {
-        scope.launch {
-            articlesInteractor.refreshCache()
-        }
     }
 }

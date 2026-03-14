@@ -4,32 +4,38 @@ import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesLocalDataSou
 import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesRemoteDataSource
 import com.rodrigoguerrero.eurail.data.articles.mappers.toArticle
 import com.rodrigoguerrero.eurail.data.articles.models.Article
+import com.rodrigoguerrero.eurail.utils.network.NetworkMonitor
+import com.rodrigoguerrero.eurail.utils.network.NoNetworkException
 import javax.inject.Inject
 
 internal class ArticlesRepositoryImpl @Inject constructor(
     private val remoteDataSource: ArticlesRemoteDataSource,
     private val localDataSource: ArticlesLocalDataSource,
+    private val networkMonitor: NetworkMonitor,
 ) : ArticlesRepository {
     override suspend fun getArticles(): Result<List<Article>> {
-        return remoteDataSource
-            .getArticles()
-            .mapCatching { articlesDto ->
-                localDataSource.saveArticles(articlesDto)
-                articlesDto.articles.map { article -> article.toArticle() }
-            }
-    }
-
-    override suspend fun getCachedArticles(): Result<List<Article>> {
         val cachedArticles = localDataSource
             .getCachedArticles()
             .map { it.toArticle() }
 
-        return if (cachedArticles.isNotEmpty()) {
-            Result.success(cachedArticles)
-        } else {
-            Result.failure(Exception("No cached articles"))
+        if (cachedArticles.isNotEmpty()) {
+            return Result.success(cachedArticles)
         }
+
+        // Simulating no network response from mock server
+        if (!networkMonitor.isConnected()) {
+            return Result.failure(NoNetworkException())
+        }
+
+        return getRemoteArticles()
     }
+
+    override suspend fun getRemoteArticles() = remoteDataSource
+        .getArticles()
+        .mapCatching { articlesDto ->
+            localDataSource.saveArticles(articlesDto)
+            articlesDto.articles.map { article -> article.toArticle() }
+        }
 
     override suspend fun hasValidCache(): Boolean {
         return localDataSource.hasValidCache()

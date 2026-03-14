@@ -82,7 +82,7 @@ internal fun MainScreen(
             state.isLoading -> FullScreenLoader()
             state.fullScreenMessageState != null -> state.fullScreenMessageState?.let {
                 FullScreenMessage(
-                    onClick = { viewModel.dispatch(MainAction.Load) },
+                    onClick = { viewModel.dispatch(MainAction.OnRetry) },
                     state = it,
                 )
             }
