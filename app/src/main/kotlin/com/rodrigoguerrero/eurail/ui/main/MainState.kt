@@ -1,6 +1,7 @@
 package com.rodrigoguerrero.eurail.ui.main
 
 import androidx.compose.runtime.Stable
+import com.rodrigoguerrero.eurail.ui.common.components.FullScreenMessageState
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCardState
 import com.rodrigoguerrero.eurail.ui.mvi.State
 import kotlinx.collections.immutable.ImmutableList
@@ -13,6 +14,7 @@ data class MainState(
     val isLoading: Boolean,
     val visibleArticles: ImmutableList<ArticleCardState>,
     val isNetworkAvailable: Boolean,
+    val fullScreenMessageState: FullScreenMessageState?,
 ): State {
     companion object {
         val initial = MainState(
@@ -21,6 +23,7 @@ data class MainState(
             searchQuery = "",
             isLoading = true,
             isNetworkAvailable = true,
+            fullScreenMessageState = null,
         )
     }
 }

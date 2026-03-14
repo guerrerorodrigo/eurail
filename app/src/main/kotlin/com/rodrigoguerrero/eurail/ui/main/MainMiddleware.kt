@@ -1,6 +1,10 @@
 package com.rodrigoguerrero.eurail.ui.main
 
+import com.rodrigoguerrero.eurail.R
+import com.rodrigoguerrero.eurail.data.remote.models.NetworkException
 import com.rodrigoguerrero.eurail.domain.articles.interactors.ArticlesInteractor
+import com.rodrigoguerrero.eurail.domain.articles.models.Article
+import com.rodrigoguerrero.eurail.ui.common.components.FullScreenMessageState
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCardState
 import com.rodrigoguerrero.eurail.ui.main.mappers.toArticleCardState
 import com.rodrigoguerrero.eurail.ui.mvi.Middleware
@@ -32,11 +36,41 @@ internal class MainMiddleware @Inject constructor(
             articlesInteractor
                 .loadArticles()
                 .fold(
-                    onSuccess = { articles ->
-                        dispatch(MainAction.OnArticlesLoaded(articles = articles.toArticleCardState()))
-                    },
-                    onFailure = {}, // TODO handle errors
+                    onSuccess = { articles -> processSuccess(articles) },
+                    onFailure = { throwable -> processFailure(throwable) },
                 )
+        }
+    }
+
+    private fun processFailure(throwable: Throwable) {
+        val error = when (throwable) {
+            is NetworkException.ClientError -> FullScreenMessageState.RemoteFullScreenMessage(
+                messageRes = throwable.errorMessage.orEmpty(),
+                ctaLabelRes = R.string.try_again,
+            )
+
+            else -> FullScreenMessageState.LocalFullScreenMessage(
+                messageRes = R.string.server_error,
+                ctaLabelRes = R.string.try_again,
+            )
+        }
+        dispatch(
+            MainAction.OnShowFullScreenMessage(error)
+        )
+    }
+
+    private fun processSuccess(articles: List<Article>) {
+        if (articles.isEmpty()) {
+            dispatch(
+                MainAction.OnShowFullScreenMessage(
+                    FullScreenMessageState.LocalFullScreenMessage(
+                        messageRes = R.string.empty_screen_message,
+                        ctaLabelRes = R.string.reload,
+                    ),
+                ),
+            )
+        } else {
+            dispatch(MainAction.OnArticlesLoaded(articles = articles.toArticleCardState()))
         }
     }
 

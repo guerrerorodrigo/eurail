@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -29,7 +30,7 @@ import com.rodrigoguerrero.eurail.ui.common.LifecycleEffect
 import com.rodrigoguerrero.eurail.ui.common.components.FullScreenLoader
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCard
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCardState
-import com.rodrigoguerrero.eurail.ui.main.components.EmptyScreen
+import com.rodrigoguerrero.eurail.ui.common.components.FullScreenMessage
 import com.rodrigoguerrero.eurail.ui.navigation.RootRoutes
 import com.rodrigoguerrero.eurail.ui.theme.EurailTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -51,7 +52,12 @@ internal fun MainScreen(
 
     LaunchedEffect(state.isNetworkAvailable) {
         if (!state.isNetworkAvailable) {
-            snackbarHostState.showSnackbar(message = errorMessage)
+            snackbarHostState.showSnackbar(
+                message = errorMessage,
+                duration = SnackbarDuration.Indefinite,
+            )
+        } else {
+            snackbarHostState.currentSnackbarData?.dismiss()
         }
     }
 
@@ -74,9 +80,12 @@ internal fun MainScreen(
     ) { paddingValues ->
         when {
             state.isLoading -> FullScreenLoader()
-            state.articles.isEmpty() -> EmptyScreen(
-                onReload = { viewModel.dispatch(MainAction.Load) },
-            )
+            state.fullScreenMessageState != null -> state.fullScreenMessageState?.let {
+                FullScreenMessage(
+                    onClick = { viewModel.dispatch(MainAction.Load) },
+                    state = it,
+                )
+            }
 
             else -> ArticlesContent(
                 articles = state.visibleArticles,

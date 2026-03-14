@@ -1,4 +1,4 @@
-package com.rodrigoguerrero.eurail.ui.main.components
+package com.rodrigoguerrero.eurail.ui.common.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,14 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.rodrigoguerrero.eurail.R
 import com.rodrigoguerrero.eurail.ui.theme.EurailTheme
 import com.rodrigoguerrero.eurail.ui.utils.PreviewBox
 import com.rodrigoguerrero.eurail.ui.utils.WidgetPreviews
+import com.rodrigoguerrero.eurail.R
 
 @Composable
-internal fun EmptyScreen(
-    onReload: () -> Unit,
+internal fun FullScreenMessage(
+    onClick: () -> Unit,
+    state: FullScreenMessageState,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -36,24 +37,36 @@ internal fun EmptyScreen(
             modifier = Modifier.padding(horizontal = EurailTheme.dimens.padding.md),
         ) {
             Text(
-                text = stringResource(R.string.empty_screen_message),
+                text = state.getMessage(),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
             )
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onReload,
+                onClick = onClick,
             ) {
-                Text(text = stringResource(R.string.reload))
+                Text(text = stringResource(state.ctaLabelRes))
             }
         }
     }
 }
 
+@Composable
+private fun FullScreenMessageState.getMessage() = when (this) {
+    is FullScreenMessageState.RemoteFullScreenMessage -> messageRes
+    is FullScreenMessageState.LocalFullScreenMessage -> stringResource(messageRes)
+}
+
 @WidgetPreviews
 @Composable
-private fun PreviewEmptyScreen() {
+private fun PreviewFullScreenMessage() {
     PreviewBox {
-        EmptyScreen(onReload = {})
+        FullScreenMessage(
+            onClick = {},
+            state = FullScreenMessageState.LocalFullScreenMessage(
+                messageRes = R.string.empty_screen_message,
+                ctaLabelRes = R.string.reload,
+            )
+        )
     }
 }

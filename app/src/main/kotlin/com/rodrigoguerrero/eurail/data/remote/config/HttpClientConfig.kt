@@ -1,7 +1,6 @@
 package com.rodrigoguerrero.eurail.data.remote.config
 
-import com.rodrigoguerrero.eurail.data.remote.models.RemoteException
-import com.rodrigoguerrero.eurail.data.remote.models.RemoteExceptionType
+import com.rodrigoguerrero.eurail.data.remote.models.NetworkException
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngine
@@ -12,6 +11,7 @@ import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.resources.Resources
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.JsonConvertException
 import io.ktor.serialization.kotlinx.json.json
@@ -37,13 +37,23 @@ fun createHttpClient(httpClientEngine: HttpClientEngine) = HttpClient(httpClient
 private fun <T : HttpClientEngineConfig> HttpClientConfig<T>.exceptionHandling() {
     HttpResponseValidator {
         handleResponseExceptionWithRequest { exception, _ ->
-            val type = when (exception) {
-                is ClientRequestException -> RemoteExceptionType.CLIENT_ERROR
-                is ServerResponseException -> RemoteExceptionType.SERVER_ERROR
-                is JsonConvertException -> RemoteExceptionType.PARSING_ERROR
-                else -> RemoteExceptionType.UNKNOWN
+            val networkException = when (exception) {
+                is ClientRequestException -> exception.getClientError()
+                is ServerResponseException -> NetworkException.ServerError()
+                is JsonConvertException -> NetworkException.ParsingError()
+                else -> NetworkException.UnknownError()
             }
-            throw RemoteException(type)
+            throw networkException
         }
     }
+}
+
+private suspend fun ClientRequestException.getClientError(): NetworkException.ClientError {
+    val errorBody = response.bodyAsText()
+    val error = try {
+        Json.decodeFromString<NetworkException.ClientError>(errorBody)
+    } catch (e: Exception) {
+        NetworkException.ClientError()
+    }
+    return error
 }

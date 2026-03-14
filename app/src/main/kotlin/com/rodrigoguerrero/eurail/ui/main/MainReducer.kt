@@ -13,6 +13,7 @@ internal class MainReducer @Inject constructor() : Reducer<MainState, MainAction
             visibleArticles = action.articles,
             isLoading = false,
             searchQuery = "",
+            fullScreenMessageState = null,
         )
         is MainAction.OnSearchQueryChanged -> state.copy(
             searchQuery = action.query,
@@ -22,6 +23,10 @@ internal class MainReducer @Inject constructor() : Reducer<MainState, MainAction
         )
         is MainAction.OnNetworkStateChanged -> state.copy(
             isNetworkAvailable = action.isAvailable,
+        )
+        is MainAction.OnShowFullScreenMessage -> state.copy(
+            fullScreenMessageState = action.fullScreenMessageState,
+            isLoading = false,
         )
         MainAction.Load,
         MainAction.OnPause,
