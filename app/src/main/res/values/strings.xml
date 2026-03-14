@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">eurail</string>
+    <string name="empty_screen_message">There are no articles to display at this time.</string>
+    <string name="reload">Reload</string>
+    <string name="search">Search</string>
+    <string name="there_is_no_internet_connection">There is no internet connection</string>
+</resources>
