@@ -8,15 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,6 +28,7 @@ import com.rodrigoguerrero.eurail.ui.common.components.FullScreenLoader
 import com.rodrigoguerrero.eurail.ui.common.components.FullScreenMessage
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCard
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCardState
+import com.rodrigoguerrero.eurail.ui.main.components.SearchField
 import com.rodrigoguerrero.eurail.ui.navigation.RootRoutes
 import com.rodrigoguerrero.eurail.ui.theme.EurailTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -65,15 +63,9 @@ internal fun MainScreen(
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
-            TextField(
-                value = state.searchQuery,
-                onValueChange = { viewModel.dispatch(MainAction.OnSearchQueryChanged(it)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding(),
-                placeholder = {
-                    Text(text = stringResource(R.string.search))
-                }
+            SearchField(
+                searchQuery = state.searchQuery,
+                onValueChanged = { viewModel.dispatch(MainAction.OnSearchQueryChanged(it)) },
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -108,7 +100,7 @@ private fun ArticlesContent(
             .padding(horizontal = EurailTheme.dimens.padding.md)
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(EurailTheme.dimens.padding.md),
-        contentPadding = PaddingValues(top = EurailTheme.dimens.padding.sm),
+        contentPadding = PaddingValues(vertical = EurailTheme.dimens.padding.sm),
     ) {
         items(items = articles, key = { it.id }) { article ->
             ArticleCard(
