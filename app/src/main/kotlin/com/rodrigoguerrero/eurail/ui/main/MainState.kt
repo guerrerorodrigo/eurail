@@ -12,7 +12,7 @@ data class MainState(
     val articles: ImmutableList<ArticleCardState>,
     val searchQuery: String,
     val isLoading: Boolean,
-    val visibleArticles: ImmutableList<ArticleCardState>,
+    val visibleArticles: ImmutableList<IndexedValue<ArticleCardState>>,
     val isNetworkAvailable: Boolean,
     val fullScreenMessageState: FullScreenMessageState?,
 ): State {

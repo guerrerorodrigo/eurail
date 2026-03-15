@@ -20,6 +20,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CollectionInfo
+import androidx.compose.ui.semantics.collectionInfo
+import androidx.compose.ui.semantics.semantics
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rodrigoguerrero.eurail.R
@@ -91,23 +94,30 @@ internal fun MainScreen(
 
 @Composable
 private fun ArticlesContent(
-    articles: ImmutableList<ArticleCardState>,
+    articles: ImmutableList<IndexedValue<ArticleCardState>>,
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier
+            .semantics {
+                collectionInfo = CollectionInfo(
+                    rowCount = articles.size,
+                    columnCount = 1,
+                )
+            }
             .padding(horizontal = EurailTheme.dimens.padding.md)
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(EurailTheme.dimens.padding.md),
         contentPadding = PaddingValues(vertical = EurailTheme.dimens.padding.sm),
     ) {
-        items(items = articles, key = { it.id }) { article ->
+        items(items = articles, key = { it.value.id }) { article ->
             ArticleCard(
-                state = article,
+                state = article.value,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onClick(article.id) },
+                    .clickable { onClick(article.value.id) },
+                index = article.index,
             )
         }
     }

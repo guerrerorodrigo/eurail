@@ -10,8 +10,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CollectionItemInfo
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.collectionItemInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.font.FontWeight
+import com.rodrigoguerrero.eurail.R
 import com.rodrigoguerrero.eurail.ui.theme.EurailTheme
 import com.rodrigoguerrero.eurail.ui.utils.PreviewBox
 import com.rodrigoguerrero.eurail.ui.utils.WidgetPreviews
@@ -19,12 +26,27 @@ import com.rodrigoguerrero.eurail.ui.utils.WidgetPreviews
 @Composable
 internal fun ArticleCard(
     state: ArticleCardState,
+    index: Int,
     modifier: Modifier = Modifier,
 ) {
+    val cardContentDescription = stringResource(
+        R.string.card_content_description,
+        state.title,
+        state.updatedDate,
+        state.summary,
+    )
     Card(
-        modifier = modifier.semantics( // TODO: pass CollectionInfo
-            mergeDescendants = true,
-            properties = { },
+        modifier = modifier.clearAndSetSemantics(
+            properties = {
+                role = Role.Button
+                contentDescription = cardContentDescription
+                collectionItemInfo = CollectionItemInfo(
+                    rowIndex = index,
+                    rowSpan = 1,
+                    columnIndex = 0,
+                    columnSpan = 1,
+                )
+            },
         ),
         colors = CardDefaults.elevatedCardColors(),
         elevation = CardDefaults.cardElevation(
@@ -58,6 +80,6 @@ private fun PreviewArticleCard() {
         id = 1,
     )
     PreviewBox {
-        ArticleCard(state = state)
+        ArticleCard(state = state, index = 0)
     }
 }

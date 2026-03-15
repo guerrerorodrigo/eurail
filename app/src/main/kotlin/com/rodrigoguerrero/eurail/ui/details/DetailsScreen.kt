@@ -1,5 +1,6 @@
 package com.rodrigoguerrero.eurail.ui.details
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +11,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rodrigoguerrero.eurail.ui.common.components.FullScreenLoader
@@ -28,6 +35,11 @@ internal fun DetailsScreen(
     viewModel: DetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -36,6 +48,12 @@ internal fun DetailsScreen(
             DetailsTopBar(
                 title = state.title,
                 onBack = onNavigateBack,
+                modifier = Modifier
+                    .semantics {
+                        contentDescription = state.title
+                    }
+                    .focusable(true)
+                    .focusRequester(focusRequester),
             )
         }
     ) { paddingValues ->

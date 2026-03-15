@@ -3,10 +3,12 @@
     <string name="empty_screen_message">There are no articles to display at this time.</string>
     <string name="reload">Reload</string>
     <string name="search">Search</string>
+    <string name="search_articles_description">Search articles</string>
     <string name="there_is_no_internet_connection">There is no internet connection</string>
     <string name="generic_error">There was an error loading your articles.</string>
     <string name="details_generic_error">There was an error loading your article.</string>
     <string name="try_again">Try again</string>
     <string name="details_error">There was an error loading this article.</string>
     <string name="navigate_back">Navigate back</string>
+    <string name="card_content_description">%1$s. Updated on %2$s. Summary: %3$s</string>
 </resources>
