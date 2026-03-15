@@ -4,6 +4,7 @@ import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesLocalDataSou
 import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesRemoteDataSource
 import com.rodrigoguerrero.eurail.data.articles.mappers.toArticle
 import com.rodrigoguerrero.eurail.data.articles.mappers.toArticleDetails
+import com.rodrigoguerrero.eurail.data.articles.mappers.toArticleDetailsEntity
 import com.rodrigoguerrero.eurail.data.articles.models.Article
 import com.rodrigoguerrero.eurail.data.articles.models.ArticleDetails
 import com.rodrigoguerrero.eurail.utils.network.NetworkMonitor
@@ -22,6 +23,8 @@ internal class ArticlesRepositoryImpl @Inject constructor(
 
         if (cachedArticles.isNotEmpty()) {
             return Result.success(cachedArticles)
+        } else {
+            localDataSource.deleteAllArticles()
         }
 
         // Simulating no network response from mock server
@@ -39,13 +42,20 @@ internal class ArticlesRepositoryImpl @Inject constructor(
             articlesDto.articles.map { article -> article.toArticle() }
         }
 
-    override suspend fun hasValidArticlesCache(): Boolean {
-        return localDataSource.hasValidArticlesCache()
-    }
-
     override suspend fun getArticleDetails(id: Int): Result<ArticleDetails> {
+        val cachedArticle = localDataSource
+            .getCachedArticleDetails(id = id)
+            ?.toArticleDetails()
+
+        if (cachedArticle != null) {
+            return Result.success(cachedArticle)
+        }
+
         return remoteDataSource
             .getArticleDetails(id = id)
-            .mapCatching { detailsDto -> detailsDto.toArticleDetails() }
+            .mapCatching { detailsDto ->
+                localDataSource.saveArticleDetails(detailsDto.toArticleDetailsEntity())
+                detailsDto.toArticleDetails()
+            }
     }
 }

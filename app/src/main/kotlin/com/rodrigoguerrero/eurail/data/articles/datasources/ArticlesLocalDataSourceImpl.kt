@@ -4,6 +4,8 @@ import com.rodrigoguerrero.eurail.data.articles.mappers.toArticleEntity
 import com.rodrigoguerrero.eurail.data.remote.models.ArticlesDto
 import com.rodrigoguerrero.shared.data.local.AppDatabase
 import com.rodrigoguerrero.shared.data.local.CachedArticlesManager
+import com.rodrigoguerrero.shared.data.local.entities.ArticleAndDetails
+import com.rodrigoguerrero.shared.data.local.entities.ArticleDetailsEntity
 import com.rodrigoguerrero.shared.data.local.entities.ArticleEntity
 import javax.inject.Inject
 
@@ -21,7 +23,16 @@ internal class ArticlesLocalDataSourceImpl @Inject constructor(
         return cachedArticles
     }
 
-    override suspend fun hasValidArticlesCache(): Boolean {
-        return CachedArticlesManager.hasValidArticlesCache(database.articlesDao())
+    override suspend fun getCachedArticleDetails(id: Int): ArticleAndDetails? {
+        return CachedArticlesManager
+            .getValidCachedArticleDetails(id = id, dao = database.articlesDao())
+    }
+
+    override suspend fun saveArticleDetails(articlesDetailsEntity: ArticleDetailsEntity) {
+        database.articlesDao().insertDetails(articlesDetailsEntity)
+    }
+
+    override suspend fun deleteAllArticles() {
+        database.articlesDao().deleteAllArticles()
     }
 }

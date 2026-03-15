@@ -64,17 +64,27 @@ internal fun DetailsScreen(
                 )
             }
 
-            else -> Column(
-                modifier = Modifier.verticalScroll(state = rememberScrollState()),
-            ) {
-                MarkdownText(
-                    markdown = state.content,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(all = EurailTheme.dimens.padding.md),
-                )
-            }
+            else -> ArticleContent(
+                content = state.content,
+                modifier = Modifier.padding(paddingValues),
+            )
         }
+    }
+}
+
+@Composable
+private fun ArticleContent(
+    content: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.verticalScroll(state = rememberScrollState()),
+    ) {
+        MarkdownText(
+            markdown = content,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(all = EurailTheme.dimens.padding.md),
+        )
     }
 }
