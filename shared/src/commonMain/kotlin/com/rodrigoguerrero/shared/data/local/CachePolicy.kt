@@ -6,11 +6,13 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
-internal object CachePolicy {
+internal class CachePolicy(
+    private val clock: Clock = Clock.System,
+) {
     private val ttl: Duration = 24.hours
 
     fun isValid(cachedAt: Long): Boolean {
-        val now = Clock.System.now().toEpochMilliseconds()
+        val now = clock.now().toEpochMilliseconds()
         return now - cachedAt < ttl.inWholeMilliseconds
     }
 }

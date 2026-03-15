@@ -28,9 +28,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rodrigoguerrero.eurail.R
 import com.rodrigoguerrero.eurail.ui.common.LifecycleEffect
 import com.rodrigoguerrero.eurail.ui.common.components.FullScreenLoader
+import com.rodrigoguerrero.eurail.ui.common.components.FullScreenMessage
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCard
 import com.rodrigoguerrero.eurail.ui.main.components.ArticleCardState
-import com.rodrigoguerrero.eurail.ui.common.components.FullScreenMessage
 import com.rodrigoguerrero.eurail.ui.navigation.RootRoutes
 import com.rodrigoguerrero.eurail.ui.theme.EurailTheme
 import kotlinx.collections.immutable.ImmutableList
