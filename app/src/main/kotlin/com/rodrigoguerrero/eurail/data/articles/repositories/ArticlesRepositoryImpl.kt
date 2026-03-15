@@ -23,8 +23,6 @@ internal class ArticlesRepositoryImpl @Inject constructor(
 
         if (cachedArticles.isNotEmpty()) {
             return Result.success(cachedArticles)
-        } else {
-            localDataSource.deleteAllArticles()
         }
 
         // Simulating no network response from mock server
@@ -38,6 +36,7 @@ internal class ArticlesRepositoryImpl @Inject constructor(
     override suspend fun getRemoteArticles() = remoteDataSource
         .getArticles()
         .mapCatching { articlesDto ->
+            localDataSource.deleteAllArticles()
             localDataSource.saveArticles(articlesDto)
             articlesDto.articles.map { article -> article.toArticle() }
         }
@@ -49,6 +48,11 @@ internal class ArticlesRepositoryImpl @Inject constructor(
 
         if (cachedArticle != null) {
             return Result.success(cachedArticle)
+        }
+
+        // Simulating no network response from mock server
+        if (!networkMonitor.isConnected()) {
+            return Result.failure(NoNetworkException())
         }
 
         return remoteDataSource

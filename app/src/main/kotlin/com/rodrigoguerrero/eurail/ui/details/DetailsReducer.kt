@@ -23,6 +23,8 @@ internal class DetailsReducer @Inject constructor() : Reducer<DetailsState, Deta
             isLoading = false,
             fullScreenMessageState = action.fullScreenMessageState,
         )
-        is DetailsAction.OnLoad -> state
+        is DetailsAction.OnLoad -> action.id?.let {
+            state.copy(id = it)
+        } ?: state
     }
 }
