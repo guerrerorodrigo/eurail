@@ -31,7 +31,11 @@ internal fun RootNavGraph(
                     },
                 )
             }
-            composable<RootRoutes.Details> { DetailsScreen() }
+            composable<RootRoutes.Details> {
+                DetailsScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                )
+            }
         }
     }
 }

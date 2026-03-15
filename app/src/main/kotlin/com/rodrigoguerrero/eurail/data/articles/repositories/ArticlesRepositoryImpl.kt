@@ -3,7 +3,9 @@ package com.rodrigoguerrero.eurail.data.articles.repositories
 import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesLocalDataSource
 import com.rodrigoguerrero.eurail.data.articles.datasources.ArticlesRemoteDataSource
 import com.rodrigoguerrero.eurail.data.articles.mappers.toArticle
+import com.rodrigoguerrero.eurail.data.articles.mappers.toArticleDetails
 import com.rodrigoguerrero.eurail.data.articles.models.Article
+import com.rodrigoguerrero.eurail.data.articles.models.ArticleDetails
 import com.rodrigoguerrero.eurail.utils.network.NetworkMonitor
 import com.rodrigoguerrero.eurail.utils.network.NoNetworkException
 import javax.inject.Inject
@@ -37,7 +39,13 @@ internal class ArticlesRepositoryImpl @Inject constructor(
             articlesDto.articles.map { article -> article.toArticle() }
         }
 
-    override suspend fun hasValidCache(): Boolean {
-        return localDataSource.hasValidCache()
+    override suspend fun hasValidArticlesCache(): Boolean {
+        return localDataSource.hasValidArticlesCache()
+    }
+
+    override suspend fun getArticleDetails(id: Int): Result<ArticleDetails> {
+        return remoteDataSource
+            .getArticleDetails(id = id)
+            .mapCatching { detailsDto -> detailsDto.toArticleDetails() }
     }
 }

@@ -21,7 +21,7 @@ internal class ArticlesLocalDataSourceImpl @Inject constructor(
         return cachedArticles
     }
 
-    override suspend fun hasValidCache(): Boolean {
+    override suspend fun hasValidArticlesCache(): Boolean {
         return CachedArticlesManager.hasValidArticlesCache(database.articlesDao())
     }
 }

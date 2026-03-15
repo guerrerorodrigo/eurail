@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.hilt.work)
     implementation(libs.work.manager)
 
+    implementation(libs.compose.markdown)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

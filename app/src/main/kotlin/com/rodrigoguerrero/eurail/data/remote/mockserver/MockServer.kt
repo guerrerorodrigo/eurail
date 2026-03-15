@@ -7,7 +7,9 @@ import io.ktor.http.HttpStatusCode
 internal val mockEngine = MockEngine { request ->
     when (request.url.encodedPath) {
         "/articles" -> validResponse()
-
+        "/articles/1" -> successDetailsResponse()
+        "/articles/2" -> clientError()
+        "/articles/3" -> serverError()
         else -> respond(
             "Not Found",
             HttpStatusCode.NotFound

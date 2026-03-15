@@ -4,6 +4,9 @@
     <string name="reload">Reload</string>
     <string name="search">Search</string>
     <string name="there_is_no_internet_connection">There is no internet connection</string>
-    <string name="server_error">There was an error loading your articles.</string>
+    <string name="generic_error">There was an error loading your articles.</string>
+    <string name="details_generic_error">There was an error loading your article.</string>
     <string name="try_again">Try again</string>
+    <string name="details_error">There was an error loading this article.</string>
+    <string name="navigate_back">Navigate back</string>
 </resources>

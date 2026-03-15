@@ -1,7 +1,8 @@
 package com.rodrigoguerrero.eurail.ui.di
 
-import com.rodrigoguerrero.eurail.domain.articles.interactors.ArticlesInteractor
-import com.rodrigoguerrero.eurail.domain.articles.interactors.ArticlesInteractorImpl
+import com.rodrigoguerrero.eurail.ui.details.DetailsAction
+import com.rodrigoguerrero.eurail.ui.details.DetailsMiddleware
+import com.rodrigoguerrero.eurail.ui.details.DetailsState
 import com.rodrigoguerrero.eurail.ui.main.MainAction
 import com.rodrigoguerrero.eurail.ui.main.MainMiddleware
 import com.rodrigoguerrero.eurail.ui.main.MainNetworkMiddleware
@@ -11,7 +12,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.multibindings.IntoSet
 
 @Module
@@ -28,4 +28,10 @@ internal interface MiddlewaresModule {
     fun bindMainNetworkMiddleware(
         middleware: MainNetworkMiddleware,
     ): Middleware<MainState, MainAction>
+
+    @Binds
+    @IntoSet
+    fun bindDetailsMiddleware(
+        middleware: DetailsMiddleware,
+    ): Middleware<DetailsState, DetailsAction>
 }

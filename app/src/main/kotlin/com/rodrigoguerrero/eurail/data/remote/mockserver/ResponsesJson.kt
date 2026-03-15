@@ -28,6 +28,6 @@ internal val clientErrorResponse = """
     {
         "errorCode": 123,
         "errorTitle": "Client error title",
-        "errorMessage": "Error message to display to the user"
+        "errorMessage": "The article you are trying to read doesn't exist"
     }
 """.trimIndent()

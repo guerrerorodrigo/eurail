@@ -1,6 +1,8 @@
 package com.rodrigoguerrero.eurail.data.articles.datasources
 
+import com.rodrigoguerrero.eurail.data.remote.models.ArticleDetailsDto
 import com.rodrigoguerrero.eurail.data.remote.models.ArticlesDto
+import com.rodrigoguerrero.eurail.data.remote.requests.ArticleDetailsRequest
 import com.rodrigoguerrero.eurail.data.remote.requests.ArticlesRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -15,6 +17,14 @@ internal class ArticlesRemoteDataSourceImpl @Inject constructor(
             httpClient
                 .get(resource = ArticlesRequest)
                 .body<ArticlesDto>()
+        }
+    }
+
+    override suspend fun getArticleDetails(id: Int): Result<ArticleDetailsDto> {
+        return runCatching {
+            httpClient
+                .get(resource = ArticleDetailsRequest.Id(id = id))
+                .body()
         }
     }
 }
